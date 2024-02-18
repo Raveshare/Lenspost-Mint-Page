@@ -3,8 +3,10 @@ import Share from "@/Icons/Share";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import CustomConnectButton from "./components/CustomConnectButton";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Mint() {
+  const pathname = usePathname();
   const [network, setNetwork] = useState("ETH");
 
   const Networks = [
@@ -46,7 +48,7 @@ export default function Mint() {
               className="border-2 border-[#E7D9E9] p-1 rounded-full cursor-pointer"
               onClick={() => {
                 navigator.clipboard.writeText(
-                  "https://mint-ui-lenspost.vercel.app/1"
+                  `https://mint-ui-lenspost.vercel.app${pathname}`
                 );
               }}
             >
