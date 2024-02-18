@@ -1,13 +1,35 @@
-import Share from "@/Icons/Share";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import React from "react";
-import CustomConnectButton from "./components/CustomConnectButton";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import ArrowDown from "@/Icons/ArrowDown";
+import Share from "@/Icons/Share";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import CustomConnectButton from "./components/CustomConnectButton";
+import { useState } from "react";
 
 export default function Mint() {
+  const [network, setNetwork] = useState("ETH");
+
+  const Networks = [
+    {
+      name: "ETH",
+      onclick: () => {
+        setNetwork("ETH");
+      },
+    },
+    {
+      name: "ZORA",
+      onclick: () => {
+        setNetwork("ZORA");
+      },
+    },
+    {
+      name: "BASE",
+      onclick: () => {
+        setNetwork("BASE");
+      },
+    },
+  ];
+
   return (
-    <div className="p-4 sm:p-10 bg-[#B7DAEE]">
+    <div className="p-4 sm:p-10 bg-[#B7DAEE] h-screen flex items-center justify-center">
       <div className="p-6 sm:p-10 bg-white shadow-2xl flex flex-col sm:flex-row justify-between rounded-3xl max-w-4xl mx-auto gap-8">
         <img
           src="https://lh3.googleusercontent.com/yfRQyA1UzkKyB_vTrLkobf6xGnuNcKCRgezt7mcsxlpJU-7erg6kCrII_HgzKLchuBV0ODba_EH_BGvmu-TEijrigeXCz0eCqMyPf-k9hBCnx64QgEfHghRFZmH0vgkAHoXo3NPB8C3OaYCcc5xnNTs"
@@ -46,8 +68,8 @@ export default function Mint() {
               >
                 <p>Select Network</p>
                 <div className="flex items-center gap-2">
-                  <p>ETH</p>
-                  <ArrowDown color="#5E5C8D" width={16} height={16}/>
+                  <p>{network}</p>
+                  <ArrowDown color="#5E5C8D" width={16} height={16} />
                 </div>
               </div>
             </DropdownMenu.Trigger>
@@ -56,15 +78,15 @@ export default function Mint() {
                 className="min-w-96 bg-white rounded-md p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
                 sideOffset={5}
               >
-                <DropdownMenu.Item className="cursor-pointer hover:bg-gray-100 p-2 leading-none text-violet11 rounded-[3px] flex items-center select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1">
-                  ETH
-                </DropdownMenu.Item>
-                <DropdownMenu.Item className="cursor-pointer hover:bg-gray-100 p-2 leading-none text-violet11 rounded-[3px] flex items-center select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1">
-                  Zora
-                </DropdownMenu.Item>
-                <DropdownMenu.Item className="cursor-pointer hover:bg-gray-100 p-2 leading-none text-violet11 rounded-[3px] flex items-center select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1">
-                  Base
-                </DropdownMenu.Item>
+                {Networks.map((network, index) => (
+                  <DropdownMenu.Item
+                    className="cursor-pointer hover:bg-gray-100 p-2 leading-none text-violet11 rounded-[3px] flex items-center select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1"
+                    key={index}
+                    onClick={network.onclick}
+                  >
+                    {network.name}
+                  </DropdownMenu.Item>
+                ))}
               </DropdownMenu.Content>
             </DropdownMenu.Portal>
           </DropdownMenu.Root>

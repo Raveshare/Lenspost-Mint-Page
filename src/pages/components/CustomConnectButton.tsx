@@ -1,8 +1,5 @@
 import formatAddress from "@/utils/formatAddress";
-import {
-  ConnectButton,
-  useAccountModal
-} from "@rainbow-me/rainbowkit";
+import { ConnectButton, useAccountModal } from "@rainbow-me/rainbowkit";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { useEffect, useState } from "react";
@@ -23,20 +20,45 @@ export default function CustomConnectButton({
   useEffect(() => {
     if (isConnected || connected) {
       isEVM ? setAddress(EVMAddress) : setAddress(publicKey?.toString());
+    } else {
+      setAddress(undefined)
     }
   }, [isConnected, connected]);
 
   return (
     <>
       {address ? (
-        <button className="bg-[#F0F0F8] flex items-center gap-1 px-3 py-2 rounded-lg w-fit ml-auto">
-          <img
-            src="https://solflare.com/assets/logo.26659b6d..svg"
-            alt=""
-            className="w-5 h-5"
-          />
-          <p className="font-medium text-xs md:text-sm">{formatAddress(address)}</p>
-        </button>
+        <>
+          {isEVM ? (
+            <button
+              className="bg-[#F0F0F8] flex items-center gap-1 px-3 py-2 rounded-lg w-fit ml-auto"
+              onClick={openAccountModal}
+            >
+              <img
+                src="https://solflare.com/assets/logo.26659b6d..svg"
+                alt=""
+                className="w-5 h-5"
+              />
+              <p className="font-medium text-xs md:text-sm">
+                {formatAddress(address)}
+              </p>
+            </button>
+          ) : (
+            <button
+              className="bg-[#F0F0F8] flex items-center gap-1 px-3 py-2 rounded-lg w-fit ml-auto"
+              onClick={disconnect}
+            >
+              <img
+                src="https://solflare.com/assets/logo.26659b6d..svg"
+                alt=""
+                className="w-5 h-5"
+              />
+              <p className="font-medium text-xs md:text-sm">
+                {formatAddress(address)}
+              </p>
+            </button>
+          )}
+        </>
       ) : (
         <>
           {isEVM ? (
