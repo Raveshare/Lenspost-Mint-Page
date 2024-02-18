@@ -42,7 +42,14 @@ export default function Mint() {
           </div>
           <div className="flex items-center justify-between mt-6">
             <h3 className="text-xl sm:text-4xl font-semibold">LensPost 2024</h3>
-            <div className="border-2 border-[#E7D9E9] p-1 rounded-full">
+            <div
+              className="border-2 border-[#E7D9E9] p-1 rounded-full cursor-pointer"
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  "https://mint-ui-lenspost.vercel.app/1"
+                );
+              }}
+            >
               <Share width={16} height={16} />
             </div>
           </div>
