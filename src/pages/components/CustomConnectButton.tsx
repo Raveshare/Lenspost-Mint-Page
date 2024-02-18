@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import formatAddress from "@/utils/formatAddress";
 import {
   ConnectButton,
-  useAccountModal,
-  useConnectModal,
+  useAccountModal
 } from "@rainbow-me/rainbowkit";
-import { useWalletModal } from "@solana/wallet-adapter-react-ui";
-import { useAccount } from "wagmi";
 import { useWallet } from "@solana/wallet-adapter-react";
-import formatAddress from "@/utils/formatAddress";
+import { useWalletModal } from "@solana/wallet-adapter-react-ui";
+import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 
 export default function CustomConnectButton({
   isEVM = false,
@@ -20,7 +19,6 @@ export default function CustomConnectButton({
   const { isConnected, address: EVMAddress } = useAccount();
   const { connected, disconnect, publicKey } = useWallet();
   const { openAccountModal } = useAccountModal();
-  const { openConnectModal } = useConnectModal();
 
   useEffect(() => {
     if (isConnected || connected) {
