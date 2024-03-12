@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import ArrowDown from "@/Icons/ArrowDown";
 import Share from "@/Icons/Share";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
@@ -9,6 +9,28 @@ import CustomConnectButton from "./CustomConnectButton";
 export default function NFTCard() {
   const pathname = usePathname();
   const [network, setNetwork] = useState("ETH");
+  const [imageUrl, setImageUrl] = useState("");
+
+  let slug = "";
+  if (pathname) {
+    slug = pathname.split("=")[1]; // Extract slug from pathname
+  }
+  //console.log("Slug::",slug);
+
+  useEffect(() => {
+    if (slug) {
+      console.log("Slug:", slug)
+      fetch(`http://localhost:3001/util/get-image-canvas?slug=${slug}`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Data:", data); // Log the fetched data to understand its structure
+          setImageUrl(data.image);
+        })
+        .catch((error) => console.error("Error fetching image:", error));
+    }
+  }, [slug]);
+  
+
 
   const Networks = [
     {
@@ -34,7 +56,7 @@ export default function NFTCard() {
   return (
     <div className="p-6 sm:p-10 bg-white shadow-2xl flex flex-col sm:flex-row justify-between rounded-3xl max-w-4xl mx-auto gap-8">
       <img
-        src="https://lh3.googleusercontent.com/yfRQyA1UzkKyB_vTrLkobf6xGnuNcKCRgezt7mcsxlpJU-7erg6kCrII_HgzKLchuBV0ODba_EH_BGvmu-TEijrigeXCz0eCqMyPf-k9hBCnx64QgEfHghRFZmH0vgkAHoXo3NPB8C3OaYCcc5xnNTs"
+        src={imageUrl}
         alt=""
         className="rounded-3xl shadow-xl w-full sm:w-1/3"
       />
@@ -55,14 +77,14 @@ export default function NFTCard() {
             <Share width={16} height={16} />
           </div>
         </div>
-        <p className="text-[#E1DFF5] mt-2 text-xs sm:text-sm">
+        <p className="text-[#11111b] mt-2 text-xs sm:text-sm">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua ut labore.
         </p>
         <div className="border border-dashed border-[#9E9EAD] my-4 border-opacity-30"></div>
         <div>
-          <p className="text-[#E1DFF5] text-xs sm:text-sm">Claimable Period</p>
-          <p className="text-[#E1DFF5] text-xs sm:text-sm">
+          <p className="text-[#11111b] text-xs sm:text-sm">Claimable Period</p>
+          <p className="text-[#11111b] text-xs sm:text-sm">
             Feb 16, 2024 00:00 (UTC) - Feb 04, 2024 23:59 (UTC)
           </p>
         </div>
