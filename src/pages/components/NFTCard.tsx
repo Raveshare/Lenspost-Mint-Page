@@ -20,11 +20,18 @@ export default function NFTCard() {
   useEffect(() => {
     if (slug) {
       console.log("Slug:", slug)
-      fetch(`http://localhost:3001/util/get-image-canvas?slug=${slug}`)
+      fetch(`http://localhost:3001/util/get-slug-details?slug=${slug}`)
         .then((response) => response.json())
         .then((data) => {
           console.log("Data:", data); // Log the fetched data to understand its structure
           setImageUrl(data.image);
+          if (data.chainId === 1) {
+            setNetwork("ETH");
+          } else if (data.chainId === 999999) {
+            setNetwork("ZORA");
+          } else if (data.chainId === 8453) {
+            setNetwork("BASE");
+          }
         })
         .catch((error) => console.error("Error fetching image:", error));
     }

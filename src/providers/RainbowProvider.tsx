@@ -6,7 +6,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 const config = getDefaultConfig({
   appName: "My RainbowKit App",
-  projectId: "YOUR_PROJECT_ID",
+  projectId: "5f657651704682f7d11cd4f7d1ada2c9",
   chains: [mainnet, polygon, optimism, arbitrum, base, zora],
 });
 
