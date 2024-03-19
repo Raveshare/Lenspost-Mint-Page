@@ -6,50 +6,26 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import CustomConnectButton from "./CustomConnectButton";
 import { chainName } from "@/utils/chainidToName";
-import { config } from "@/providers/RainbowProvider";
-import {
-  useAccount,
-  useChainId,
-  useContractWrite,
-  useNetwork,
-  usePrepareContractWrite,
-  useSwitchNetwork,
-  useWaitForTransaction,
-  useSwitchChain,
-  getChainId,
-  switchChain
-} from "wagmi/actions";
-// create edition configs
-// const {
-//   config,
-//   error: prepareError,
-//   isError: isPrepareError,
-// } = useSimulateContract({
-//   abi: zoraNftCreatorV1Config.abi,
-//   address: zoraNftCreatorV1Config.address[chainId],
-//   functionName: "createEditionWithReferral",
-//   args: handleMintSettings().args,
-// });
-// const { write, data, error, isLoading, isError } = useContractWrite(config);
-// const {
-//   data: receipt,
-//   isLoading: isPending,
-//   isSuccess,
-// } = useWaitForTransaction({ hash: data?.hash });
+import { useSwitchChain, useAccount } from "wagmi";
+import { config } from "../../../config";
+import { MintButton } from "./MintButton";
 
 export default function NFTCard() {
   const pathname = usePathname();
+  const {chainId, address} = useAccount();
+  const { switchChain } = useSwitchChain()
+  
   const [data, setData]=useState({
     image:"",
     contract:"",
     chainID:0,
     contractType:""
   });
-  const chainId = getChainId(config)
-  console.log("ChainID of Network",chainId)
+  //const chainId = getChainId(config)
+  console.log("ChainID of Network::",chainId)
+  console.log("Address of User::",address)
   const [network, setNetwork] = useState("ETH");
-  
-  const [imageUrl, setImageUrl] = useState("");
+  const [quantity, setQuantity] = useState(1);
 
   let slug = "";
   if (pathname) {
@@ -60,7 +36,7 @@ export default function NFTCard() {
   useEffect(() => {
     if (slug) {
       console.log("Slug:", slug)
-      fetch(`http://localhost:3001/util/get-slug-details?slug=${slug}`)
+      fetch(`${config?.BACKEND_URL}/util/get-slug-details?slug=${slug}`)
         .then((response) => response.json())
         .then((data) => {
           //console.log("Data:", data); // Log the fetched data to understand its structure
@@ -77,7 +53,7 @@ export default function NFTCard() {
 
   console.log("Data::",data);
   const chainID=data.chainID
-  const datachainName = chainName(chainID as 0 | 1 | 5 | 8453 | 84532 | 7777777 | 10 | 42161 | 999999);
+  const dataChainName = chainName(chainID as any);
   
 
 
@@ -119,7 +95,7 @@ export default function NFTCard() {
             className="border-2 border-[#E7D9E9] p-1 rounded-full cursor-pointer"
             onClick={() => {
               navigator.clipboard.writeText(
-                `https://mint-ui-lenspost.vercel.app${pathname}`
+                `${config?.APP_URL}.vercel.app${pathname}`
               );
             }}
           >
@@ -139,18 +115,28 @@ export default function NFTCard() {
         </div>
         <div className="inline-block bg-gray-100 rounded-md p-2 cursor-pointer hover:bg-gray-200 mt-2">
           <div className="flex items-center gap-2">
-          {chainId !== data.chainID ? (
+          {chainId !== data?.chainID ? (
       <button
-        className="text-red-500"
-        onClick={() => switchChain(config, { chainId: data.chainID })}
+        className="text-red-500"  
+        onClick={() => switchChain({ chainId: data?.chainID })}
       >
-        Switch to {datachainName}
+        Switch to {dataChainName}
       </button>
     ) : (
-      <p className="text-gray-700">Network of NFT: {datachainName}</p>
+      <p className="text-gray-700">Network of NFT: {dataChainName}</p>
     )}
           </div>
+          
 
+        </div>
+        <div className="ml-2 inline-block">
+          <label className="text-sm font-medium text-black">Quantity:</label>
+          <input
+            type="number"
+            className="my-2 ml-3 px-2 py-1 ring-2 ring-gray-500 rounded-md w-28 border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            value={quantity}
+            onChange={(e) => setQuantity(parseInt(e.target.value))}
+          />
         </div>
         {/*  */}
         <DropdownMenu.Root>
@@ -183,11 +169,13 @@ export default function NFTCard() {
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
-        <div className="bg-[#EBE8FD] px-4 py-2 rounded-lg mt-2 cursor-pointer w-full sm:w-fit text-center">
+        {/* Pass Contract Type and Contract Address */}
+        <MintButton contractType={data.contractType} contractAddress={data.contract as `0x${string}`} quantity={quantity} signerAddress={address as '0x${string}'}/>
+        {/* <div className="bg-[#EBE8FD] px-4 py-2 rounded-lg mt-2 cursor-pointer w-full sm:w-fit text-center">
           <p className="text-sm bg-gradient-to-r from-[#4126E8] to-[#7B5CF8] text-transparent bg-clip-text inline-block font-semibold">
             Mint NFT
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

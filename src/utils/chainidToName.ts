@@ -7,6 +7,7 @@ const chains = {
     10: "Optimism",
     42161: "Arbitrum",
     0: "Unknown",
+    999999999:"Zora Sepolia"
   };
   
   export const chainName = (chainId: keyof typeof chains) => {
