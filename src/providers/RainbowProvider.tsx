@@ -1,13 +1,13 @@
 import "@rainbow-me/rainbowkit/styles.css";
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { WagmiProvider } from "wagmi";
-import { mainnet, polygon, optimism, arbitrum, base, zora } from "wagmi/chains";
+import { mainnet, polygon, optimism, arbitrum, base, zora, zoraSepolia } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
-const config = getDefaultConfig({
+export const config = getDefaultConfig({
   appName: "My RainbowKit App",
-  projectId: "YOUR_PROJECT_ID",
-  chains: [mainnet, polygon, optimism, arbitrum, base, zora],
+  projectId: "5f657651704682f7d11cd4f7d1ada2c9",
+  chains: [mainnet, polygon, optimism, arbitrum, base, zora, zoraSepolia, zora],
 });
 
 const queryClient = new QueryClient();
