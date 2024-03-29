@@ -1,1 +1,1 @@
-export * from "./errorMsg";
+export * from './formatAddress';

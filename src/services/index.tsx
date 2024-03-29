@@ -1,1 +1,1 @@
-export * from "./getCollectionData";
+export * from './getCollectionData';

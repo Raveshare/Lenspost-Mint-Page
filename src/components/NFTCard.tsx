@@ -1,86 +1,119 @@
-import { ArrowDown, Share } from "@/assets";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import Image from "next/image";
+'use client';
 
-const NFTCard = () => {
+import {
+  useWaitForTransactionReceipt,
+  useSimulateContract,
+  useWriteContract,
+  useAccount
+} from 'wagmi';
+import { LENSPOST_ETH_ADDRESS, ZORA_REWARD_FEE, chainName } from '@/data';
+import { erc721DropABI } from '@zoralabs/zora-721-contracts';
+import { CollectionData } from '@/types';
+import { Button, Input } from '@/ui';
+import { parseEther } from 'viem';
+import { Share } from '@/assets';
+import Image from 'next/image';
+
+import { CustomConnectButton } from '.';
+
+const NFTCard = ({
+  contractAddress,
+  contractType,
+  imageUrl,
+  chainId
+}: CollectionData) => {
+  const { address: EVMAddress } = useAccount();
+  // const bigIntQuantity = BigInt(`${quantity}`);
+  //const mintNo=BigInt(quantity);
+  const comment = '';
+  const mintReferral = LENSPOST_ETH_ADDRESS;
+  //const mintFee=BigInt(ZORA_REWARD_FEE);
+  const mintFee = parseEther(ZORA_REWARD_FEE);
+  const mintTotalFee = mintFee * 1n;
+
+  const {
+    isError: isPrepareError,
+    error: prepareError,
+    data
+  } = useSimulateContract({
+    args: [EVMAddress as `0x${string}`, 1n, comment, mintReferral],
+    functionName: 'mintWithRewards',
+    address: contractAddress,
+    value: mintTotalFee,
+    abi: erc721DropABI,
+    chainId: chainId
+  });
+
+  console.log('data', data);
+
+  const {
+    writeContract: handleMint721,
+    data: hash,
+    isPending,
+    error
+  } = useWriteContract();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash
+    });
+
+  const handleMint1155 = () => {};
+
+  const handleMint = () => {
+    if (contractType === 'ERC721') {
+      handleMint721;
+    } else {
+      handleMint1155();
+    }
+  };
+
   return (
-    <div className="p-6 sm:p-10 bg-white shadow-2xl flex flex-col sm:flex-row justify-between rounded-3xl max-w-4xl mx-auto gap-8">
+    <div className="mx-auto flex max-w-4xl flex-col justify-between gap-8 rounded-3xl bg-white p-6 shadow-2xl sm:flex-row sm:p-10">
       <Image
-        src="/lenspost.png"
+        className="w-full rounded-3xl shadow-xl sm:w-1/3"
+        src={imageUrl}
+        height={300}
+        width={300}
         alt=""
-        className="rounded-3xl shadow-xl w-full sm:w-1/3"
       />
       <div className="w-full">
-        <div className="w-fit ml-auto">
-          <ConnectButton />
+        <div className="ml-auto w-fit">
+          <CustomConnectButton />
         </div>
-        <div className="flex items-center justify-between mt-6">
-          <h3 className="text-xl sm:text-4xl font-semibold">LensPost 2024</h3>
-          <div className="border-2 border-[#E7D9E9] p-1 rounded-full cursor-pointer">
-            <Share width={16} height={16} />
+        <div className="mt-6 flex items-center justify-between">
+          <h3 className="text-xl font-semibold sm:text-4xl">LensPost 2024</h3>
+          <div className="cursor-pointer rounded-full border-2 border-[#E7D9E9] p-1">
+            <Share height={16} width={16} />
           </div>
         </div>
-        <p className="text-[#11111b] mt-2 text-xs sm:text-sm">
+        <p className="mt-2 text-xs text-[#11111b] sm:text-sm">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua ut labore.
         </p>
-        <div className="border border-dashed border-[#9E9EAD] my-4 border-opacity-30"></div>
+        <div className="my-4 border border-dashed border-[#9E9EAD] border-opacity-30"></div>
         <div>
-          <p className="text-[#11111b] text-xs sm:text-sm">Claimable Period</p>
-          <p className="text-[#11111b] text-xs sm:text-sm">
+          <p className="text-xs text-[#11111b] sm:text-sm">Claimable Period</p>
+          <p className="text-xs text-[#11111b] sm:text-sm">
             Feb 16, 2024 00:00 (UTC) - Feb 04, 2024 23:59 (UTC)
           </p>
         </div>
-        <div className="inline-block bg-gray-100 rounded-md p-2 cursor-pointer hover:bg-gray-200 mt-2">
+        <div className="mt-2 inline-block cursor-pointer rounded-md bg-gray-100 p-2 hover:bg-gray-200">
           <div className="flex items-center gap-2">
-            <p className="text-gray-700">Network of NFT: Base</p>
+            <p className="text-gray-700">
+              <span className="font-semibold">Network:</span>{' '}
+              {chainName[chainId as unknown as keyof typeof chainName]}
+            </p>
           </div>
         </div>
         <div className="ml-2 inline-block">
           <label className="text-sm font-medium text-black">Quantity:</label>
-          <input
-            type="number"
-            className="my-2 ml-3 px-2 py-1 ring-2 ring-gray-500 rounded-md w-28 border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-          />
+          <Input />
         </div>
-        {/*  */}
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger asChild>
-            <div
-              className="p-2 rounded-lg border-2 border-[#9291A3] text-[#5E5C8D] font-semibold text-xs my-2 flex items-center max-w-96 justify-between"
-              aria-label="Customise options"
-            >
-              <p>Select Network</p>
-              <div className="flex items-center gap-2">
-                <p>Base</p>
-                <ArrowDown color="#5E5C8D" width={16} height={16} />
-              </div>
-            </div>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Portal>
-            <DropdownMenu.Content
-              className="min-w-96 bg-white rounded-md p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
-              sideOffset={5}
-            >
-              <DropdownMenu.Item className="cursor-pointer hover:bg-gray-100 p-2 leading-none text-violet11 rounded-[3px] flex items-center select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1">
-                Base
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Portal>
-        </DropdownMenu.Root>
-        {/* Pass Contract Type and Contract Address */}
-        {/* <MintButton
-          contractType={data.contractType}
-          contractAddress={data.contract as `0x${string}`}
-          quantity={quantity}
-          signerAddress={address as "0x${string}"}
-        /> */}
-        {/* <div className="bg-[#EBE8FD] px-4 py-2 rounded-lg mt-2 cursor-pointer w-full sm:w-fit text-center">
-          <p className="text-sm bg-gradient-to-r from-[#4126E8] to-[#7B5CF8] text-transparent bg-clip-text inline-block font-semibold">
-            Mint NFT
-          </p>
-        </div> */}
+        {/* Dropdown */}
+        <div className="mt-2 w-full cursor-pointer rounded-lg bg-[#EBE8FD] px-4 py-2 text-center sm:w-fit">
+          <Button onClick={handleMint} title="Mint NFT" />
+        </div>
       </div>
     </div>
   );

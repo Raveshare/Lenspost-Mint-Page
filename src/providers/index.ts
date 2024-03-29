@@ -1,1 +1,1 @@
-export { default as EvmProvider } from "./EvmProvider";
+export { default as EvmProvider } from './EvmProvider';

@@ -1,10 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  webpack5: (config) => {
-    config.externals.push("pino-pretty", "lokijs", "encoding");
+  images: {
+    remotePatterns: [
+      {
+        hostname: 'lenspost.s3.ap-south-1.amazonaws.com',
+        protocol: 'https'
+      }
+    ]
+  },
+  webpack: (config) => {
+    config.externals.push('pino-pretty', 'iokijs', 'encoding');
     return config;
   },
+  reactStrictMode: true
 };
 
 export default nextConfig;

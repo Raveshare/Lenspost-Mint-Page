@@ -1,9 +1,9 @@
 export interface CollectionData {
-  imageUrl: string;
   contractAddress: `0x${string}`;
-  chainId: `eip155:${string}` | `solana:${string}`;
-  contractType: string;
+  chainId: undefined | number;
   message?: string | any;
+  contractType: string;
+  imageUrl: string;
 }
 
 export interface ErrorMsg {
@@ -14,7 +14,7 @@ export interface ErrorMsg {
       };
       name: string;
     };
-    status: number;
     statusText: string;
+    status: number;
   };
 }

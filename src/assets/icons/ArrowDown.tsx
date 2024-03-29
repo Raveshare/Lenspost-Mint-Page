@@ -1,10 +1,10 @@
-import { SVGProps } from "react";
+import { SVGProps } from 'react';
 
 const ArrowDown = (props: SVGProps<SVGSVGElement>) => (
   <svg
+    xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 30 29"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
     <path
