@@ -18,7 +18,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   twitter: {
     creator: LENSPOST_TWITTER_USERNAME,
-    images: [`${APP_URL}/logo.png`], // Must be an absolute URL
+    images: [`${APP_URL}/logo.png`],
     site: LENSPOST_TWITTER_USERNAME,
     card: 'summary_large_image',
     description: DESCRIPTION,
@@ -30,7 +30,14 @@ export const metadata: Metadata = {
     title: APP_NAME,
     url: APP_URL
   },
-  keywords: ['NFT', 'Mint', 'Lenspost', 'Lenspost NFT', 'Lenspost Mint'],
+  keywords: [
+    'Lenspost Mint',
+    'Lenspost NFT',
+    'Lenspost',
+    'Poster',
+    'Mint',
+    'NFT'
+  ],
   authors: [{ url: LENSPOST_APP_URL, name: AUTHOR }],
   metadataBase: new URL(APP_URL),
   description: DESCRIPTION,

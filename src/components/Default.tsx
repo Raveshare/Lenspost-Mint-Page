@@ -1,5 +1,5 @@
+import { LENSPOST_APP_NAME, LENSPOST_APP_URL, social } from '@/data';
 import { ArrorRight } from '@/assets';
-import { Social } from '@/data';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -18,14 +18,14 @@ const Default: FC<Props> = ({ color, text }) => {
         </div>
         <Link
           className="flex cursor-pointer items-center justify-between gap-2 rounded-lg border border-solid border-gray-400 p-3 transition-transform hover:scale-105"
-          href="https://app.lenspost.xyz"
+          href={LENSPOST_APP_URL}
           target="_blank"
         >
-          <p className="text-xl text-[#11111b]">Remix on Lenspost</p>
+          <p className="text-xl text-[#11111b]">Remix on {LENSPOST_APP_NAME}</p>
           <ArrorRight strokeWidth={2} height={16} width={16} />
         </Link>
         <div className="flex items-center justify-between gap-4">
-          {Social?.map((social, index) => (
+          {social?.map((social, index) => (
             <Link
               className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-[#E7D9E9] p-2 transition-all hover:bg-[#D9C9D9]"
               href={social?.url}

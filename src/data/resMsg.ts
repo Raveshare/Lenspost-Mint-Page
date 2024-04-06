@@ -1,4 +1,4 @@
-export const ResMsg = {
+export const resMsg = {
   500: 'Internal Server Error',
   503: 'Service Unavailable',
   504: 'Gateway Timeout',

@@ -27,16 +27,23 @@ export const generateMetadata = async ({
       site: LENSPOST_TWITTER_USERNAME,
       card: 'summary_large_image',
       description: DESCRIPTION,
-      images: [imageUrl], // Must be an absolute URL
+      images: [imageUrl],
       title: APP_NAME
     },
+    keywords: [
+      'Lenspost Mint',
+      'Lenspost NFT',
+      'Lenspost',
+      'Poster',
+      'Mint',
+      'NFT'
+    ],
     openGraph: {
       description: DESCRIPTION,
       images: [imageUrl],
       title: APP_NAME,
       url: APP_URL
     },
-    keywords: ['NFT', 'Mint', 'Lenspost', 'Lenspost NFT', 'Lenspost Mint'],
     authors: [{ url: LENSPOST_APP_URL, name: AUTHOR }],
     metadataBase: new URL(APP_URL),
     description: DESCRIPTION,
