@@ -1,0 +1,30 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:perfectionist/recommended-line-length"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": ["prettier", "unused-imports", "perfectionist"],
+  "rules": {
+    "prettier/prettier": "error",
+    "unused-imports/no-unused-imports": "error"
+  },
+  "ignorePatterns": [
+    "node_modules",
+    ".next",
+    "out",
+    "public",
+    "tailwind.config.ts",
+    "social.ts"
+  ]
+}
