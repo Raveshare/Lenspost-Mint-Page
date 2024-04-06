@@ -55,7 +55,6 @@ export const generateMetadata = async ({
 
 const Home = async ({ params }: Props) => {
   const data = await getCollectionData(params.slug);
-  console.log('layout-data', data);
 
   if (data?.message) {
     return <Default text={data.message} />;

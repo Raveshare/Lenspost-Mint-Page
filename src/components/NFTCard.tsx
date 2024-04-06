@@ -4,17 +4,21 @@ import {
   useWaitForTransactionReceipt,
   useSimulateContract,
   useWriteContract,
+  useSwitchChain,
   useAccount
 } from 'wagmi';
 import { LENSPOST_ETH_ADDRESS, ZORA_REWARD_FEE, chainName } from '@/data';
 import { erc721DropABI } from '@zoralabs/zora-721-contracts';
+// import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { CollectionData } from '@/types';
 import { Button, Input } from '@/ui';
+import { base } from 'viem/chains';
 import { parseEther } from 'viem';
+import { useEffect } from 'react';
 import { Share } from '@/assets';
 import Image from 'next/image';
 
-import { CustomConnectButton } from '.';
+import { ConnectButton } from '.';
 
 const NFTCard = ({
   contractAddress,
@@ -22,7 +26,14 @@ const NFTCard = ({
   imageUrl,
   chainId
 }: CollectionData) => {
-  const { address: EVMAddress } = useAccount();
+  const {
+    chainId: currentChainId,
+    address: EVMAddress,
+    isConnected
+  } = useAccount();
+  const { isSuccess: isSwitchChainSuccess, switchChain } = useSwitchChain();
+
+  const isSupportedChain: Boolean = chainId === currentChainId;
   // const bigIntQuantity = BigInt(`${quantity}`);
   //const mintNo=BigInt(quantity);
   const comment = '';
@@ -31,42 +42,56 @@ const NFTCard = ({
   const mintFee = parseEther(ZORA_REWARD_FEE);
   const mintTotalFee = mintFee * 1n;
 
-  const {
-    isError: isPrepareError,
-    error: prepareError,
-    data
-  } = useSimulateContract({
+  const config = {
     args: [EVMAddress as `0x${string}`, 1n, comment, mintReferral],
     functionName: 'mintWithRewards',
     address: contractAddress,
     value: mintTotalFee,
     abi: erc721DropABI,
     chainId: chainId
-  });
+  };
 
-  console.log('data', data);
+  const {
+    isError: isSimulateError,
+    isLoading: isSimulating,
+    error: simulateError,
+    data: simulateData,
+    refetch
+  } = useSimulateContract(config as any);
 
   const {
     writeContract: handleMint721,
-    data: hash,
-    isPending,
-    error
+    isError: isWriteError,
+    isPending: isWriting,
+    error: writeError,
+    data: writeData
   } = useWriteContract();
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransactionReceipt({
-      hash
-    });
+  const {
+    isLoading: isTxConfirming,
+    isSuccess: isTxSuccess,
+    isError: isTxError,
+    error: txError,
+    data: txData
+  } = useWaitForTransactionReceipt({
+    hash: writeData
+  });
 
   const handleMint1155 = () => {};
 
   const handleMint = () => {
-    if (contractType === 'ERC721') {
-      handleMint721;
+    if (contractType == '721') {
+      handleMint721(simulateData?.request as any);
     } else {
       handleMint1155();
     }
   };
+
+  useEffect(() => {
+    if (isSwitchChainSuccess) {
+      refetch();
+    }
+  }, [isSwitchChainSuccess, refetch]);
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col justify-between gap-8 rounded-3xl bg-white p-6 shadow-2xl sm:flex-row sm:p-10">
@@ -79,7 +104,7 @@ const NFTCard = ({
       />
       <div className="w-full">
         <div className="ml-auto w-fit">
-          <CustomConnectButton />
+          <ConnectButton />
         </div>
         <div className="mt-6 flex items-center justify-between">
           <h3 className="text-xl font-semibold sm:text-4xl">LensPost 2024</h3>
@@ -91,7 +116,7 @@ const NFTCard = ({
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua ut labore.
         </p>
-        <div className="my-4 border border-dashed border-[#9E9EAD] border-opacity-30"></div>
+        <hr className="my-4 border border-dashed border-[#9E9EAD] border-opacity-30" />
         <div>
           <p className="text-xs text-[#11111b] sm:text-sm">Claimable Period</p>
           <p className="text-xs text-[#11111b] sm:text-sm">
@@ -110,10 +135,70 @@ const NFTCard = ({
           <label className="text-sm font-medium text-black">Quantity:</label>
           <Input />
         </div>
-        {/* Dropdown */}
-        <div className="mt-2 w-full cursor-pointer rounded-lg bg-[#EBE8FD] px-4 py-2 text-center sm:w-fit">
-          <Button onClick={handleMint} title="Mint NFT" />
+
+        {/* TODO: Dropdown */}
+
+        <div className="mt-2 w-full rounded-lg bg-[#EBE8FD] px-4 py-2 text-center sm:w-fit">
+          {isSupportedChain ? (
+            <Button
+              disabled={!isConnected || isSimulateError || !simulateData}
+              onClick={handleMint}
+              title="Mint NFT"
+            />
+          ) : (
+            <Button
+              onClick={() => switchChain({ chainId: chainId as number })}
+              title="Switch chain"
+            />
+          )}
         </div>
+
+        {(isSimulating || isWriting || isTxConfirming) && (
+          <div className="mt-2 text-sm font-semibold ">
+            {isSimulating && 'Simulating...'}
+            {isTxConfirming && 'Confirming...'}
+            {isWriting && 'Writing...'}
+          </div>
+        )}
+
+        {isSimulateError && (
+          <div className="mt-2 text-sm text-red-500">
+            <span className="font-bold">Error:</span>{' '}
+            {simulateError?.message?.split('\n')[0]}
+          </div>
+        )}
+
+        {isWriteError && (
+          <div className="mt-2 text-sm text-red-500">
+            <span className="font-bold">Error:</span>{' '}
+            {writeError?.message?.split('\n')[0]}
+          </div>
+        )}
+
+        {isTxError && (
+          <div className="mt-2 text-sm text-red-500">
+            <span className="font-bold">Error:</span>{' '}
+            {txError?.message?.split('\n')[0]}
+          </div>
+        )}
+
+        {isTxSuccess && (
+          <div className="mt-2 text-sm text-green-500">
+            <span className="font-bold">Success:</span> Transaction confirmed
+            <a
+              href={
+                base?.blockExplorers?.default?.url +
+                '/tx/' +
+                txData?.transactionHash
+              }
+              rel="noreferrer"
+              target="_blank"
+            >
+              {' '}
+              View here
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

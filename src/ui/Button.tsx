@@ -27,6 +27,7 @@ interface ButtonProps
   variant?: ButtonVariants;
   onClick?: () => void;
   className?: string;
+  disabled?: boolean;
   outline?: boolean;
   icon?: ReactNode;
   title?: string;
@@ -37,6 +38,7 @@ const Button = ({
   className = '',
   size = 'md',
   children,
+  disabled,
   onClick,
   outline,
   title,
@@ -44,8 +46,9 @@ const Button = ({
 }: ButtonProps) => {
   return (
     <button
-      className="inline-block bg-gradient-to-r from-[#4126E8] to-[#7B5CF8] bg-clip-text text-sm font-semibold text-transparent"
+      className="rounded-lg bg-[#EBE8FD] px-4 py-2 text-center"
       onClick={onClick && onClick}
+      disabled={disabled}
     >
       {title && <span>{title}</span>}
       {icon ? icon : null}
