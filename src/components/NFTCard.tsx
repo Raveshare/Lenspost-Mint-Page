@@ -1,49 +1,72 @@
 'use client';
 
 import {
-  useWaitForTransactionReceipt,
-  useSimulateContract,
-  useWriteContract,
-  useSwitchChain,
-  useAccount
-} from 'wagmi';
-import { LENSPOST_ETH_ADDRESS, ZORA_REWARD_FEE, chainName } from '@/data';
+  LENSPOST_ETH_ADDRESS,
+  CREATORS_REWARD_FEE,
+  chainName,
+  regex
+} from '@/data';
 import { erc721DropABI } from '@zoralabs/zora-721-contracts';
-// import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useSwitchChain, useAccount } from 'wagmi';
+import { useEffect, useState, FC } from 'react';
 import { CollectionData } from '@/types';
-import { Button, Input } from '@/ui';
+import { useMint721 } from '@/hooks';
 import { base } from 'viem/chains';
 import { parseEther } from 'viem';
-import { useEffect } from 'react';
 import { Share } from '@/assets';
 import Image from 'next/image';
+import { toast } from 'sonner';
+import { Button } from '@/ui';
 
 import { ConnectButton } from '.';
 
-const NFTCard = ({
+// import { ConnectButton } from '@rainbow-me/rainbowkit';
+
+const NFTCard: FC<CollectionData> = ({
   contractAddress,
   contractType,
   imageUrl,
-  chainId
-}: CollectionData) => {
+  chainId,
+  title
+}) => {
+  const [quantity, setQuantity] = useState(1n);
+  const { isSuccess: isSwitchChainSuccess, switchChain } = useSwitchChain();
+  const [isInputError, setIsInputError] = useState(false);
   const {
     chainId: currentChainId,
     address: EVMAddress,
     isConnected
   } = useAccount();
-  const { isSuccess: isSwitchChainSuccess, switchChain } = useSwitchChain();
 
-  const isSupportedChain: Boolean = chainId === currentChainId;
+  const isSupportedChain: Boolean = isConnected && chainId === currentChainId;
+  const mintFee = parseEther(CREATORS_REWARD_FEE);
+  const mintReferral = LENSPOST_ETH_ADDRESS;
+  const mintTotalFee = mintFee * quantity;
+  const comment = '';
+
   // const bigIntQuantity = BigInt(`${quantity}`);
   //const mintNo=BigInt(quantity);
-  const comment = '';
-  const mintReferral = LENSPOST_ETH_ADDRESS;
   //const mintFee=BigInt(ZORA_REWARD_FEE);
-  const mintFee = parseEther(ZORA_REWARD_FEE);
-  const mintTotalFee = mintFee * 1n;
 
-  const config = {
-    args: [EVMAddress as `0x${string}`, 1n, comment, mintReferral],
+  const handleQuantity = (e: any) => {
+    const value = e.target.value;
+
+    if (!regex?.number.test(value)) {
+      setIsInputError(true);
+      return;
+    } else {
+      setIsInputError(false);
+    }
+
+    if (value < 1 || !value) {
+      setQuantity(1n);
+    } else {
+      setQuantity(BigInt(value));
+    }
+  };
+
+  const mintParams = {
+    args: [EVMAddress as `0x${string}`, quantity, comment, mintReferral],
     functionName: 'mintWithRewards',
     address: contractAddress,
     value: mintTotalFee,
@@ -52,46 +75,52 @@ const NFTCard = ({
   };
 
   const {
-    isError: isSimulateError,
-    isLoading: isSimulating,
-    error: simulateError,
-    data: simulateData,
-    refetch
-  } = useSimulateContract(config as any);
-
-  const {
-    writeContract: handleMint721,
-    isError: isWriteError,
-    isPending: isWriting,
-    error: writeError,
-    data: writeData
-  } = useWriteContract();
-
-  const {
-    isLoading: isTxConfirming,
-    isSuccess: isTxSuccess,
-    isError: isTxError,
-    error: txError,
-    data: txData
-  } = useWaitForTransactionReceipt({
-    hash: writeData
-  });
-
-  const handleMint1155 = () => {};
-
-  const handleMint = () => {
-    if (contractType == '721') {
-      handleMint721(simulateData?.request as any);
-    } else {
-      handleMint1155();
-    }
-  };
+    simulation: {
+      refetchSimulation,
+      isSimulateError,
+      simulateError,
+      isSimulating,
+      simulateData
+    },
+    tx: { isTxConfirming, isTxSuccess, isTxError, txError, txData },
+    write: { isWriteError, writeError, isWriting, mint721 }
+  } = useMint721(mintParams);
 
   useEffect(() => {
     if (isSwitchChainSuccess) {
-      refetch();
+      refetchSimulation();
     }
-  }, [isSwitchChainSuccess, refetch]);
+  }, [isSwitchChainSuccess, refetchSimulation]);
+
+  useEffect(() => {
+    if (isTxSuccess) {
+      toast.success('NFT minted successfully!');
+    }
+  }, [isTxSuccess]);
+
+  useEffect(() => {
+    if (isSimulateError || isWriteError || isTxError) {
+      const error: any = simulateError || writeError || txError;
+      toast.error(error?.message?.split('\n')[0]);
+    }
+  }, [
+    isSimulateError,
+    simulateError,
+    isWriteError,
+    writeError,
+    isTxError,
+    txError
+  ]);
+
+  console.log({
+    typeof: typeof erc721DropABI,
+    currentChainId,
+    simulateError,
+    simulateData,
+    isInputError,
+    writeError,
+    quantity
+  });
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col justify-between gap-8 rounded-3xl bg-white p-6 shadow-2xl sm:flex-row sm:p-10">
@@ -99,7 +128,7 @@ const NFTCard = ({
         className="w-full rounded-3xl shadow-xl sm:w-1/3"
         src={imageUrl}
         height={300}
-        width={300}
+        width={500}
         alt=""
       />
       <div className="w-full">
@@ -107,48 +136,93 @@ const NFTCard = ({
           <ConnectButton />
         </div>
         <div className="mt-6 flex items-center justify-between">
-          <h3 className="text-xl font-semibold sm:text-4xl">LensPost 2024</h3>
-          <div className="cursor-pointer rounded-full border-2 border-[#E7D9E9] p-1">
+          <h3 className="text-xl font-semibold sm:text-4xl">{title}</h3>
+          <div
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href);
+              toast.success('Link copied!');
+            }}
+            className="cursor-pointer rounded-full border-2 border-[#E7D9E9] p-1"
+          >
             <Share height={16} width={16} />
           </div>
         </div>
-        <p className="mt-2 text-xs text-[#11111b] sm:text-sm">
+        {/* <p className="mt-2 text-xs text-[#11111b] sm:text-sm">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua ut labore.
-        </p>
+        </p> */}
         <hr className="my-4 border border-dashed border-[#9E9EAD] border-opacity-30" />
-        <div>
-          <p className="text-xs text-[#11111b] sm:text-sm">Claimable Period</p>
-          <p className="text-xs text-[#11111b] sm:text-sm">
-            Feb 16, 2024 00:00 (UTC) - Feb 04, 2024 23:59 (UTC)
-          </p>
-        </div>
-        <div className="mt-2 inline-block cursor-pointer rounded-md bg-gray-100 p-2 hover:bg-gray-200">
-          <div className="flex items-center gap-2">
-            <p className="text-gray-700">
-              <span className="font-semibold">Network:</span>{' '}
-              {chainName[chainId as unknown as keyof typeof chainName]}
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs font-semibold text-[#11111b] sm:text-sm">
+              Network
+            </p>
+            <p className="text-xs text-[#11111b] sm:text-sm">
+              {chainName[chainId as keyof typeof chainName]}
             </p>
           </div>
+          <div>
+            <p className="text-xs font-semibold text-[#11111b] sm:text-sm">
+              Price
+            </p>
+            <p className="text-xs text-[#11111b] sm:text-sm">Free</p>
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-[#11111b] sm:text-sm">
+              Royalty
+            </p>
+            <p className="text-xs text-[#11111b] sm:text-sm">10%</p>
+          </div>
         </div>
-        <div className="ml-2 inline-block">
-          <label className="text-sm font-medium text-black">Quantity:</label>
-          <Input />
+        <div className="mt-3 flex items-center justify-between">
+          <div>
+            <p className="text-xs font-semibold text-[#11111b] sm:text-sm">
+              Minted
+            </p>
+            <p className="text-xs text-[#11111b] sm:text-sm">11/100</p>
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-[#11111b] sm:text-sm">
+              Price
+            </p>
+            <p className="text-xs text-[#11111b] sm:text-sm">Free</p>
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-[#11111b] sm:text-sm">
+              Royalty
+            </p>
+            <p className="text-xs text-[#11111b] sm:text-sm">10%</p>
+          </div>
+        </div>
+        <hr className="my-4 border border-dashed border-[#9E9EAD] border-opacity-30" />
+
+        <div className="mt-2 flex w-full items-center justify-between">
+          <div className="flex w-full items-center gap-2">
+            <label className="text-sm font-medium text-black">Quantity:</label>
+            <input
+              className={`w-16 rounded-md bg-slate-100 p-1 text-center outline-none ring-2 ${isInputError ? 'ring-red-500' : 'ring-blue-800'} focus:ring-${isInputError ? 'red' : 'blue'}-500`}
+              onChange={handleQuantity}
+              placeholder="1"
+              type="text"
+            />
+          </div>
         </div>
 
         {/* TODO: Dropdown */}
 
         <div className="mt-2 w-full rounded-lg bg-[#EBE8FD] px-4 py-2 text-center sm:w-fit">
-          {isSupportedChain ? (
+          {!isConnected ? (
+            <ConnectButton />
+          ) : !isSupportedChain ? (
             <Button
-              disabled={!isConnected || isSimulateError || !simulateData}
-              onClick={handleMint}
-              title="Mint NFT"
+              onClick={() => switchChain({ chainId: chainId as number })}
+              title="Switch Network"
             />
           ) : (
             <Button
-              onClick={() => switchChain({ chainId: chainId as number })}
-              title="Switch chain"
+              disabled={!isConnected || isSimulateError || !simulateData}
+              onClick={mint721}
+              title="Mint NFT"
             />
           )}
         </div>
@@ -161,30 +235,8 @@ const NFTCard = ({
           </div>
         )}
 
-        {isSimulateError && (
-          <div className="mt-2 text-sm text-red-500">
-            <span className="font-bold">Error:</span>{' '}
-            {simulateError?.message?.split('\n')[0]}
-          </div>
-        )}
-
-        {isWriteError && (
-          <div className="mt-2 text-sm text-red-500">
-            <span className="font-bold">Error:</span>{' '}
-            {writeError?.message?.split('\n')[0]}
-          </div>
-        )}
-
-        {isTxError && (
-          <div className="mt-2 text-sm text-red-500">
-            <span className="font-bold">Error:</span>{' '}
-            {txError?.message?.split('\n')[0]}
-          </div>
-        )}
-
         {isTxSuccess && (
           <div className="mt-2 text-sm text-green-500">
-            <span className="font-bold">Success:</span> Transaction confirmed
             <a
               href={
                 base?.blockExplorers?.default?.url +
@@ -195,7 +247,7 @@ const NFTCard = ({
               target="_blank"
             >
               {' '}
-              View here
+              View tx
             </a>
           </div>
         )}

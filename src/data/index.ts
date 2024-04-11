@@ -4,3 +4,4 @@ export * from './chainName';
 export * from './social';
 export * from './resMsg';
 export * from './dummy';
+export * from './regex';

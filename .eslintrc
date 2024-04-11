@@ -19,7 +19,6 @@
   "rules": {
     "prettier/prettier": "error",
     "unused-imports/no-unused-imports": "error",
-    // "no-unexpected-multiline": "error",
     "react/jsx-no-useless-fragment": "error",
     "react/react-in-jsx-scope": "off",
     "react/self-closing-comp": "error",

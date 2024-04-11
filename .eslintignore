@@ -2,5 +2,6 @@ node_modules
 .next
 out
 public
+pnpm-lock.yaml
 tailwind.config.ts
 social.ts
