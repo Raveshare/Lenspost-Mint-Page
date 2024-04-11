@@ -8,12 +8,14 @@ export const getCollectionData = async (
     const response = await fetch(
       `${BACKEND_ENDPOINT}/util/get-slug-details?slug=${slug}`
     );
+    console.log('response', response);
 
     if (response.ok) {
       const data = await response.json();
       return {
         contractType: data?.contractType,
         contractAddress: data?.contract,
+        title: data?.metadata?.name,
         chainId: data?.chainId,
         imageUrl: data?.image
       };

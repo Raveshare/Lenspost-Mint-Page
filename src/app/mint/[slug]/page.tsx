@@ -65,6 +65,7 @@ const Home = async ({ params }: Props) => {
       contractType={data.contractType}
       imageUrl={data.imageUrl}
       chainId={data.chainId}
+      title={data?.title}
     />
   );
 };

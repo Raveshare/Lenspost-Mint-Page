@@ -31,4 +31,4 @@ export const LENSPOST_SOLANA_ADDRESS =
 export const BACKEND_ENDPOINT = backendApi[ENV as keyof typeof backendApi];
 
 // Zora
-export const ZORA_REWARD_FEE = '0.000777';
+export const CREATORS_REWARD_FEE = '0.000777';

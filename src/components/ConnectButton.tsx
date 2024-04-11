@@ -4,8 +4,9 @@ import { useConnectModal, useAccountModal } from '@rainbow-me/rainbowkit';
 import { formatAddress } from '@/utils';
 import { useAccount } from 'wagmi';
 import { Button } from '@/ui';
+import { FC } from 'react';
 
-const ConnectButton = () => {
+const ConnectButton: FC = () => {
   const { address: EVMAddress, isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { openAccountModal } = useAccountModal();

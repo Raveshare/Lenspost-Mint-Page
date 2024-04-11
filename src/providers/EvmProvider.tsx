@@ -11,7 +11,7 @@ const config = getDefaultConfig({
   chains: [base, mainnet, polygon, optimism, arbitrum],
   projectId: WALLETCONNECT_KEY,
   appName: 'Lenspost Studio',
-  ssr: true // If your dApp uses server side rendering (SSR)
+  ssr: true
 });
 
 const queryClient = new QueryClient();
