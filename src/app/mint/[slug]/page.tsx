@@ -54,18 +54,20 @@ export const generateMetadata = async ({
 };
 
 const Home = async ({ params }: Props) => {
-  const data = await getCollectionData(params.slug);
+  const { contractAddress, contractType, imageUrl, chainId, message, title } =
+    await getCollectionData(params?.slug);
 
-  if (data?.message) {
-    return <Default text={data.message} />;
+  if (message) {
+    return <Default text={message} />;
   }
+
   return (
     <NFTCard
-      contractAddress={data.contractAddress}
-      contractType={data.contractType}
-      imageUrl={data.imageUrl}
-      chainId={data.chainId}
-      title={data?.title}
+      contractAddress={contractAddress}
+      contractType={contractType}
+      imageUrl={imageUrl}
+      chainId={chainId}
+      title={title}
     />
   );
 };

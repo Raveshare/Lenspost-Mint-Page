@@ -20,8 +20,6 @@ import { Button } from '@/ui';
 
 import { ConnectButton } from '.';
 
-// import { ConnectButton } from '@rainbow-me/rainbowkit';
-
 const NFTCard: FC<CollectionData> = ({
   contractAddress,
   contractType,
@@ -43,10 +41,6 @@ const NFTCard: FC<CollectionData> = ({
   const mintReferral = LENSPOST_ETH_ADDRESS;
   const mintTotalFee = mintFee * quantity;
   const comment = '';
-
-  // const bigIntQuantity = BigInt(`${quantity}`);
-  //const mintNo=BigInt(quantity);
-  //const mintFee=BigInt(ZORA_REWARD_FEE);
 
   const handleQuantity = (e: any) => {
     const value = e.target.value;
@@ -112,15 +106,15 @@ const NFTCard: FC<CollectionData> = ({
     txError
   ]);
 
-  console.log({
-    typeof: typeof erc721DropABI,
-    currentChainId,
-    simulateError,
-    simulateData,
-    isInputError,
-    writeError,
-    quantity
-  });
+  // console.log({
+  //   typeof: typeof erc721DropABI,
+  //   currentChainId,
+  //   simulateError,
+  //   simulateData,
+  //   isInputError,
+  //   writeError,
+  //   quantity
+  // });
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col justify-between gap-8 rounded-3xl bg-white p-6 shadow-2xl sm:flex-row sm:p-10">
@@ -147,10 +141,6 @@ const NFTCard: FC<CollectionData> = ({
             <Share height={16} width={16} />
           </div>
         </div>
-        {/* <p className="mt-2 text-xs text-[#11111b] sm:text-sm">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua ut labore.
-        </p> */}
         <hr className="my-4 border border-dashed border-[#9E9EAD] border-opacity-30" />
         <div className="flex items-center justify-between">
           <div>
