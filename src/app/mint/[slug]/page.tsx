@@ -54,8 +54,20 @@ export const generateMetadata = async ({
 };
 
 const Home = async ({ params }: Props) => {
-  const { contractAddress, contractType, imageUrl, chainId, message, title } =
-    await getCollectionData(params?.slug);
+  const {
+    contractAddress,
+    publicSaleStart,
+    publicSaleEnd,
+    contractType,
+    totalMinted,
+    activeSale,
+    maxSupply,
+    imageUrl,
+    chainId,
+    message,
+    price,
+    title
+  } = await getCollectionData(params?.slug);
 
   if (message) {
     return <Default text={message} />;
@@ -64,10 +76,16 @@ const Home = async ({ params }: Props) => {
   return (
     <NFTCard
       contractAddress={contractAddress}
+      publicSaleStart={publicSaleStart}
+      publicSaleEnd={publicSaleEnd}
       contractType={contractType}
+      totalMinted={totalMinted}
+      activeSale={activeSale}
+      maxSupply={maxSupply}
       imageUrl={imageUrl}
       chainId={chainId}
       title={title}
+      price={price}
     />
   );
 };

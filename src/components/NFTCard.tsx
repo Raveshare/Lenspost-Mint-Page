@@ -22,9 +22,15 @@ import { ConnectButton } from '.';
 
 const NFTCard: FC<CollectionData> = ({
   contractAddress,
+  publicSaleStart,
+  publicSaleEnd,
   contractType,
+  totalMinted,
+  activeSale,
+  maxSupply,
   imageUrl,
   chainId,
+  price,
   title
 }) => {
   const [quantity, setQuantity] = useState(1n);
@@ -120,10 +126,11 @@ const NFTCard: FC<CollectionData> = ({
     <div className="mx-auto flex max-w-4xl flex-col justify-between gap-8 rounded-3xl bg-white p-6 shadow-2xl sm:flex-row sm:p-10">
       <Image
         className="w-full rounded-3xl shadow-xl sm:w-1/3"
+        loading="lazy"
         src={imageUrl}
         height={300}
         width={500}
-        alt=""
+        alt="image"
       />
       <div className="w-full">
         <div className="ml-auto w-fit">
@@ -155,13 +162,17 @@ const NFTCard: FC<CollectionData> = ({
             <p className="text-xs font-semibold text-[#11111b] sm:text-sm">
               Price
             </p>
-            <p className="text-xs text-[#11111b] sm:text-sm">Free</p>
+            <p className="text-xs text-[#11111b] sm:text-sm">
+              {Number(price) > 0 ? price : 'Free'}
+            </p>
           </div>
           <div>
             <p className="text-xs font-semibold text-[#11111b] sm:text-sm">
-              Royalty
+              Minting
             </p>
-            <p className="text-xs text-[#11111b] sm:text-sm">10%</p>
+            <p className="text-xs text-[#11111b] sm:text-sm">
+              {activeSale ? 'Now' : 'no'}
+            </p>
           </div>
         </div>
         <div className="mt-3 flex items-center justify-between">
@@ -169,20 +180,22 @@ const NFTCard: FC<CollectionData> = ({
             <p className="text-xs font-semibold text-[#11111b] sm:text-sm">
               Minted
             </p>
-            <p className="text-xs text-[#11111b] sm:text-sm">11/100</p>
+            <p className="text-xs text-[#11111b] sm:text-sm">
+              {totalMinted}/{maxSupply}
+            </p>
           </div>
-          <div>
+          {/* <div>
             <p className="text-xs font-semibold text-[#11111b] sm:text-sm">
               Price
             </p>
             <p className="text-xs text-[#11111b] sm:text-sm">Free</p>
-          </div>
-          <div>
+          </div> */}
+          {/* <div>
             <p className="text-xs font-semibold text-[#11111b] sm:text-sm">
               Royalty
             </p>
             <p className="text-xs text-[#11111b] sm:text-sm">10%</p>
-          </div>
+          </div> */}
         </div>
         <hr className="my-4 border border-dashed border-[#9E9EAD] border-opacity-30" />
 
