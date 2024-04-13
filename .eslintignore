@@ -3,5 +3,4 @@ node_modules
 out
 public
 pnpm-lock.yaml
-tailwind.config.ts
 social.ts

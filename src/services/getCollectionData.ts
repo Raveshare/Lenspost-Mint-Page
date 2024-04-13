@@ -8,11 +8,16 @@ export const getCollectionData = async (
     const response = await fetch(
       `${BACKEND_ENDPOINT}/util/get-slug-details?slug=${slug}`
     );
-    console.log('response', response);
 
     if (response.ok) {
       const data = await response.json();
       return {
+        publicSaleStart: data?.metadata?.publicSaleStart,
+        publicSaleEnd: data?.metadata?.publicSaleEnd,
+        activeSale: data?.metadata?.publicSaleActive,
+        totalMinted: data?.metadata?.totalMinted,
+        price: data?.metadata?.publicSalePrice,
+        maxSupply: data?.metadata?.maxSupply,
         contractType: data?.contractType,
         contractAddress: data?.contract,
         title: data?.metadata?.name,
@@ -20,13 +25,11 @@ export const getCollectionData = async (
         imageUrl: data?.image
       };
     } else {
-      console.error('response', response);
       return {
         message: response?.status + ' - ' + response?.statusText
       };
     }
   } catch (error) {
-    console.error('error', error);
     return {
       message: "Couldn't fetch data"
     };
