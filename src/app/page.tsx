@@ -1,8 +1,8 @@
-import { LENSPOST_APP_NAME } from '@/data';
 import { Default } from '@/components';
+import { APP_NAME } from '@/data';
 
 const Home = () => {
-  return <Default text={`${LENSPOST_APP_NAME} Mint page`} />;
+  return <Default text={APP_NAME} />;
 };
 
 export default Home;

@@ -46,7 +46,7 @@ const NFTCard: FC<CollectionData> = ({
   const [quantity, setQuantity] = useState(1n);
 
   const isSupportedChain: Boolean = isConnected && chainId === currentChainId;
-  const imageCdnUrl = imageUrl.replace(S3_IMAGE_URL, CDN_IMAGE_URL);
+  const imageCdnUrl = imageUrl?.replace(S3_IMAGE_URL, CDN_IMAGE_URL);
   const mintFee = parseEther(CREATORS_REWARD_FEE);
   const royalty = Number(royaltyBPS) / 100;
   const mintReferral = LENSPOST_ETH_ADDRESS;

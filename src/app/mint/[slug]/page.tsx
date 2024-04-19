@@ -8,6 +8,7 @@ import {
   APP_URL,
   AUTHOR
 } from '@/data';
+import { getFrameMetadata } from '@coinbase/onchainkit/frame';
 import { Default, NFTCard } from '@/components';
 import { getCollectionData } from '@/services';
 import { Metadata } from 'next';
@@ -22,7 +23,21 @@ export const generateMetadata = async ({
   const slug = params.slug;
 
   const { imageUrl } = await getCollectionData(slug);
-  const imageCdnUrl = imageUrl.replace(S3_IMAGE_URL, CDN_IMAGE_URL);
+  const imageCdnUrl = imageUrl?.replace(S3_IMAGE_URL, CDN_IMAGE_URL);
+
+  const frameMetadata = getFrameMetadata({
+    buttons: [
+      {
+        target: `${APP_URL}/mint/${slug}`,
+        label: 'Mint on Poster',
+        action: 'link'
+      }
+    ],
+    image: {
+      aspectRatio: '1:1',
+      src: imageCdnUrl
+    }
+  });
 
   return {
     twitter: {
@@ -49,6 +64,7 @@ export const generateMetadata = async ({
     },
     authors: [{ url: LENSPOST_APP_URL, name: AUTHOR }],
     metadataBase: new URL(APP_URL),
+    other: { ...frameMetadata },
     description: DESCRIPTION,
     icons: ['/favicon.ico'],
     creator: AUTHOR,

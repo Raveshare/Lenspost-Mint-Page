@@ -7,7 +7,7 @@ export const ENV = process.env.NODE_ENV;
 export const WALLETCONNECT_KEY = process.env.NEXT_PUBLIC_WALLETCONNECT_KEY;
 
 // Application
-export const APP_NAME = 'Mint page';
+export const APP_NAME = 'Poster mint page';
 export const DESCRIPTION = `${APP_NAME} is a platform for minting NFTs.`;
 export const AUTHOR = 'Lenspost labs';
 export const APP_URL = 'https://mint.poster.fun';
