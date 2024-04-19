@@ -1,6 +1,8 @@
 import {
   LENSPOST_TWITTER_USERNAME,
   LENSPOST_APP_URL,
+  CDN_IMAGE_URL,
+  S3_IMAGE_URL,
   DESCRIPTION,
   APP_NAME,
   APP_URL,
@@ -20,6 +22,7 @@ export const generateMetadata = async ({
   const slug = params.slug;
 
   const { imageUrl } = await getCollectionData(slug);
+  const imageCdnUrl = imageUrl.replace(S3_IMAGE_URL, CDN_IMAGE_URL);
 
   return {
     twitter: {
@@ -27,7 +30,7 @@ export const generateMetadata = async ({
       site: LENSPOST_TWITTER_USERNAME,
       card: 'summary_large_image',
       description: DESCRIPTION,
-      images: [imageUrl],
+      images: [imageCdnUrl],
       title: APP_NAME
     },
     keywords: [
@@ -40,7 +43,7 @@ export const generateMetadata = async ({
     ],
     openGraph: {
       description: DESCRIPTION,
-      images: [imageUrl],
+      images: [imageCdnUrl],
       title: APP_NAME,
       url: APP_URL
     },
@@ -55,12 +58,13 @@ export const generateMetadata = async ({
 
 const Home = async ({ params }: Props) => {
   const {
+    publicSaleActive,
     contractAddress,
     publicSaleStart,
     publicSaleEnd,
     contractType,
     totalMinted,
-    activeSale,
+    royaltyBPS,
     maxSupply,
     imageUrl,
     chainId,
@@ -75,12 +79,13 @@ const Home = async ({ params }: Props) => {
 
   return (
     <NFTCard
+      publicSaleActive={publicSaleActive}
       contractAddress={contractAddress}
       publicSaleStart={publicSaleStart}
       publicSaleEnd={publicSaleEnd}
       contractType={contractType}
       totalMinted={totalMinted}
-      activeSale={activeSale}
+      royaltyBPS={royaltyBPS}
       maxSupply={maxSupply}
       imageUrl={imageUrl}
       chainId={chainId}

@@ -29,6 +29,8 @@ export const LENSPOST_SOLANA_ADDRESS =
 
 // URLs
 export const BACKEND_ENDPOINT = backendApi[ENV as keyof typeof backendApi];
+export const S3_IMAGE_URL = 'https://lenspost.s3.ap-south-1.amazonaws.com';
+export const CDN_IMAGE_URL = 'https://lenspost.b-cdn.net';
 
 // Zora
 export const CREATORS_REWARD_FEE = '0.000777';

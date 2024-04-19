@@ -3,6 +3,8 @@
 import {
   LENSPOST_ETH_ADDRESS,
   CREATORS_REWARD_FEE,
+  CDN_IMAGE_URL,
+  S3_IMAGE_URL,
   chainName,
   regex
 } from '@/data';
@@ -21,29 +23,32 @@ import { Button } from '@/ui';
 import { ConnectButton } from '.';
 
 const NFTCard: FC<CollectionData> = ({
+  publicSaleActive,
   contractAddress,
   publicSaleStart,
   publicSaleEnd,
   contractType,
   totalMinted,
-  activeSale,
+  royaltyBPS,
   maxSupply,
   imageUrl,
   chainId,
   price,
   title
 }) => {
-  const [quantity, setQuantity] = useState(1n);
-  const { isSuccess: isSwitchChainSuccess, switchChain } = useSwitchChain();
-  const [isInputError, setIsInputError] = useState(false);
   const {
     chainId: currentChainId,
     address: EVMAddress,
     isConnected
   } = useAccount();
+  const { isSuccess: isSwitchChainSuccess, switchChain } = useSwitchChain();
+  const [isInputError, setIsInputError] = useState(false);
+  const [quantity, setQuantity] = useState(1n);
 
   const isSupportedChain: Boolean = isConnected && chainId === currentChainId;
+  const imageCdnUrl = imageUrl.replace(S3_IMAGE_URL, CDN_IMAGE_URL);
   const mintFee = parseEther(CREATORS_REWARD_FEE);
+  const royalty = Number(royaltyBPS) / 100;
   const mintReferral = LENSPOST_ETH_ADDRESS;
   const mintTotalFee = mintFee * quantity;
   const comment = '';
@@ -112,24 +117,16 @@ const NFTCard: FC<CollectionData> = ({
     txError
   ]);
 
-  // console.log({
-  //   typeof: typeof erc721DropABI,
-  //   currentChainId,
-  //   simulateError,
-  //   simulateData,
-  //   isInputError,
-  //   writeError,
-  //   quantity
-  // });
-
   return (
     <div className="mx-auto flex max-w-4xl flex-col justify-between gap-8 rounded-3xl bg-white p-6 shadow-2xl sm:flex-row sm:p-10">
       <Image
-        className="w-full rounded-3xl shadow-xl sm:w-1/3"
-        loading="lazy"
-        src={imageUrl}
-        height={300}
-        width={500}
+        className="w-full rounded-3xl shadow-xl sm:w-1/2"
+        blurDataURL={imageCdnUrl}
+        placeholder="blur"
+        src={imageCdnUrl}
+        priority={true}
+        height={1080}
+        width={1920}
         alt="image"
       />
       <div className="w-full">
@@ -149,53 +146,53 @@ const NFTCard: FC<CollectionData> = ({
           </div>
         </div>
         <hr className="my-4 border border-dashed border-[#9E9EAD] border-opacity-30" />
-        <div className="flex items-center justify-between">
+        <div className="flex w-full flex-wrap gap-9">
           <div>
-            <p className="text-xs font-semibold text-[#11111b] sm:text-sm">
+            <p className="text-sm font-semibold text-[#11111b] sm:text-sm">
               Network
             </p>
-            <p className="text-xs text-[#11111b] sm:text-sm">
+            <p className="text-sm text-[#11111b] sm:text-sm">
               {chainName[chainId as keyof typeof chainName]}
             </p>
           </div>
           <div>
-            <p className="text-xs font-semibold text-[#11111b] sm:text-sm">
+            <p className="text-sm font-semibold text-[#11111b] sm:text-sm">
+              Type
+            </p>
+            <p className="text-sm text-[#11111b] sm:text-sm">
+              ERC{contractType}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-[#11111b] sm:text-sm">
               Price
             </p>
-            <p className="text-xs text-[#11111b] sm:text-sm">
-              {Number(price) > 0 ? price : 'Free'}
+            <p className="text-sm text-[#11111b] sm:text-sm">
+              {Number(price) > 0 ? `${price} ETH` : 'Free'}
             </p>
           </div>
           <div>
-            <p className="text-xs font-semibold text-[#11111b] sm:text-sm">
+            <p className="text-sm font-semibold text-[#11111b] sm:text-sm">
               Minting
             </p>
-            <p className="text-xs text-[#11111b] sm:text-sm">
-              {activeSale ? 'Now' : 'no'}
+            <p className="text-sm text-[#11111b] sm:text-sm">
+              {publicSaleActive ? 'Now' : 'No'}
             </p>
           </div>
-        </div>
-        <div className="mt-3 flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-[#11111b] sm:text-sm">
+            <p className="text-sm font-semibold text-[#11111b] sm:text-sm">
               Minted
             </p>
-            <p className="text-xs text-[#11111b] sm:text-sm">
+            <p className="text-sm text-[#11111b] sm:text-sm">
               {totalMinted}/{maxSupply}
             </p>
           </div>
-          {/* <div>
-            <p className="text-xs font-semibold text-[#11111b] sm:text-sm">
-              Price
-            </p>
-            <p className="text-xs text-[#11111b] sm:text-sm">Free</p>
-          </div> */}
-          {/* <div>
-            <p className="text-xs font-semibold text-[#11111b] sm:text-sm">
+          <div>
+            <p className="text-sm font-semibold text-[#11111b] sm:text-sm">
               Royalty
             </p>
-            <p className="text-xs text-[#11111b] sm:text-sm">10%</p>
-          </div> */}
+            <p className="text-sm text-[#11111b] sm:text-sm">{royalty} %</p>
+          </div>
         </div>
         <hr className="my-4 border border-dashed border-[#9E9EAD] border-opacity-30" />
 
