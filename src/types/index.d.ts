@@ -1,13 +1,14 @@
 export interface CollectionData {
   contractAddress?: `0x${string}`;
   chainId?: undefined | number;
+  publicSaleActive?: boolean;
   publicSaleStart?: string;
   imageUrl?: string | any;
   publicSaleEnd?: string;
   message?: string | any;
   contractType?: string;
-  activeSale?: boolean;
   totalMinted?: string;
+  royaltyBPS?: string;
   maxSupply?: string;
   price?: string;
   title?: string;

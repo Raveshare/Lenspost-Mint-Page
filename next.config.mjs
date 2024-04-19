@@ -3,8 +3,10 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        hostname: 'lenspost.s3.ap-south-1.amazonaws.com',
-        protocol: 'https'
+        protocol: 'https',
+        pathname: '/**',
+        hostname: '**',
+        port: ''
       }
     ]
   },

@@ -12,11 +12,12 @@ export const getCollectionData = async (
     if (response.ok) {
       const data = await response.json();
       return {
+        publicSaleActive: data?.metadata?.publicSaleActive,
         publicSaleStart: data?.metadata?.publicSaleStart,
         publicSaleEnd: data?.metadata?.publicSaleEnd,
-        activeSale: data?.metadata?.publicSaleActive,
         totalMinted: data?.metadata?.totalMinted,
         price: data?.metadata?.publicSalePrice,
+        royaltyBPS: data?.metadata?.royaltyBPS,
         maxSupply: data?.metadata?.maxSupply,
         contractType: data?.contractType,
         contractAddress: data?.contract,
