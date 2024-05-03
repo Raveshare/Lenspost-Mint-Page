@@ -11,13 +11,14 @@ import {
 import { erc721DropABI } from '@zoralabs/zora-721-contracts';
 import { useSwitchChain, useAccount } from 'wagmi';
 import { useEffect, useState, FC } from 'react';
+import { revalidateTag } from 'next/cache';
 import { CollectionData } from '@/types';
 import { useMint721 } from '@/hooks';
 import { base } from 'viem/chains';
 import { parseEther } from 'viem';
 import { Share } from '@/assets';
-import Image from 'next/image';
 import { toast } from 'sonner';
+import Image from 'next/image';
 import { Button } from '@/ui';
 
 import { ConnectButton } from '.';
@@ -25,8 +26,6 @@ import { ConnectButton } from '.';
 const NFTCard: FC<CollectionData> = ({
   publicSaleActive,
   contractAddress,
-  publicSaleStart,
-  publicSaleEnd,
   contractType,
   totalMinted,
   royaltyBPS,
@@ -46,7 +45,7 @@ const NFTCard: FC<CollectionData> = ({
   const [quantity, setQuantity] = useState(1n);
 
   const isSupportedChain: Boolean = isConnected && chainId === currentChainId;
-  const imageCdnUrl = imageUrl?.replace(S3_IMAGE_URL, CDN_IMAGE_URL);
+  const imageCdnUrl = imageUrl?.replace(S3_IMAGE_URL, CDN_IMAGE_URL) as string;
   const mintFee = parseEther(CREATORS_REWARD_FEE);
   const royalty = Number(royaltyBPS) / 100;
   const mintReferral = LENSPOST_ETH_ADDRESS;
@@ -100,6 +99,7 @@ const NFTCard: FC<CollectionData> = ({
   useEffect(() => {
     if (isTxSuccess) {
       toast.success('NFT minted successfully!');
+      revalidateTag('getCollectionData');
     }
   }, [isTxSuccess]);
 
@@ -121,13 +121,13 @@ const NFTCard: FC<CollectionData> = ({
     <div className="mx-auto flex max-w-4xl flex-col justify-between gap-8 rounded-3xl bg-white p-6 shadow-2xl sm:flex-row sm:p-10">
       <Image
         className="w-full rounded-3xl shadow-xl sm:w-1/2"
-        blurDataURL="/blur.png"
+        blurDataURL={imageCdnUrl}
+        alt={title as string}
         placeholder="blur"
         src={imageCdnUrl}
         priority={true}
         height={1080}
         width={1920}
-        alt="image"
       />
       <div className="w-full">
         <div className="ml-auto w-fit">

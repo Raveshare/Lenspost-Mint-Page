@@ -6,7 +6,12 @@ export const getCollectionData = async (
 ): Promise<CollectionData> => {
   try {
     const response = await fetch(
-      `${BACKEND_ENDPOINT}/util/get-slug-details?slug=${slug}`
+      `${BACKEND_ENDPOINT}/util/get-slug-details?slug=${slug}`,
+      {
+        next: {
+          tags: ['getCollectionData']
+        }
+      }
     );
 
     if (response.ok) {
