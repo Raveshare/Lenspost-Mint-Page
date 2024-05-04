@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import {
   LENSPOST_TWITTER_USERNAME,
   LENSPOST_APP_URL,
-  DESCRIPTION,
+  APP_DESCRIPTION,
   APP_NAME,
   APP_URL,
   AUTHOR
@@ -21,13 +21,13 @@ export const metadata: Metadata = {
     creator: LENSPOST_TWITTER_USERNAME,
     images: [`${APP_URL}/logo.png`],
     site: LENSPOST_TWITTER_USERNAME,
+    description: APP_DESCRIPTION,
     card: 'summary_large_image',
-    description: DESCRIPTION,
     title: APP_NAME
   },
   openGraph: {
     images: [`${APP_URL}/logo.png`],
-    description: DESCRIPTION,
+    description: APP_DESCRIPTION,
     title: APP_NAME,
     url: APP_URL
   },
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ url: LENSPOST_APP_URL, name: AUTHOR }],
   metadataBase: new URL(APP_URL),
-  description: DESCRIPTION,
+  description: APP_DESCRIPTION,
   icons: ['/favicon.ico'],
   title: APP_NAME,
   creator: AUTHOR

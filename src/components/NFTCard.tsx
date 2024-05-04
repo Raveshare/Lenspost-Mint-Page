@@ -11,7 +11,6 @@ import {
 import { erc721DropABI } from '@zoralabs/zora-721-contracts';
 import { useSwitchChain, useAccount } from 'wagmi';
 import { useEffect, useState, FC } from 'react';
-import { revalidateTag } from 'next/cache';
 import { CollectionData } from '@/types';
 import { useMint721 } from '@/hooks';
 import { base } from 'viem/chains';
@@ -99,7 +98,6 @@ const NFTCard: FC<CollectionData> = ({
   useEffect(() => {
     if (isTxSuccess) {
       toast.success('NFT minted successfully!');
-      revalidateTag('getCollectionData');
     }
   }, [isTxSuccess]);
 
