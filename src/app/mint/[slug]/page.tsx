@@ -1,9 +1,9 @@
 import {
   LENSPOST_TWITTER_USERNAME,
   LENSPOST_APP_URL,
+  APP_DESCRIPTION,
   CDN_IMAGE_URL,
   S3_IMAGE_URL,
-  DESCRIPTION,
   APP_NAME,
   APP_URL,
   AUTHOR
@@ -43,10 +43,16 @@ export const generateMetadata = async ({
     twitter: {
       creator: LENSPOST_TWITTER_USERNAME,
       site: LENSPOST_TWITTER_USERNAME,
+      description: APP_DESCRIPTION,
       card: 'summary_large_image',
-      description: DESCRIPTION,
       images: [imageCdnUrl],
       title: APP_NAME
+    },
+    openGraph: {
+      description: APP_DESCRIPTION,
+      images: [imageCdnUrl],
+      title: APP_NAME,
+      url: APP_URL
     },
     keywords: [
       'Lenspost Mint',
@@ -56,16 +62,10 @@ export const generateMetadata = async ({
       'Mint',
       'NFT'
     ],
-    openGraph: {
-      description: DESCRIPTION,
-      images: [imageCdnUrl],
-      title: APP_NAME,
-      url: APP_URL
-    },
     authors: [{ url: LENSPOST_APP_URL, name: AUTHOR }],
     metadataBase: new URL(APP_URL),
+    description: APP_DESCRIPTION,
     other: { ...frameMetadata },
-    description: DESCRIPTION,
     icons: ['/favicon.ico'],
     creator: AUTHOR,
     title: APP_NAME

@@ -9,7 +9,7 @@ export const getCollectionData = async (
       `${BACKEND_ENDPOINT}/util/get-slug-details?slug=${slug}`,
       {
         next: {
-          tags: ['getCollectionData']
+          revalidate: 60
         }
       }
     );
