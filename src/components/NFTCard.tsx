@@ -5,8 +5,8 @@ import {
   CREATORS_REWARD_FEE,
   CDN_IMAGE_URL,
   S3_IMAGE_URL,
-  chainName,
-  regex
+  CHAIN_NAME,
+  REGEX
 } from '@/data';
 import { erc721DropABI } from '@zoralabs/zora-721-contracts';
 import { useSwitchChain, useAccount } from 'wagmi';
@@ -54,7 +54,7 @@ const NFTCard: FC<CollectionData> = ({
   const handleQuantity = (e: any) => {
     const value = e.target.value;
 
-    if (!regex?.number.test(value)) {
+    if (!REGEX?.number.test(value)) {
       setIsInputError(true);
       return;
     } else {
@@ -150,7 +150,7 @@ const NFTCard: FC<CollectionData> = ({
               Network
             </p>
             <p className="text-sm text-[#11111b] sm:text-sm">
-              {chainName[chainId as keyof typeof chainName]}
+              {CHAIN_NAME[chainId as keyof typeof CHAIN_NAME]}
             </p>
           </div>
           <div>
