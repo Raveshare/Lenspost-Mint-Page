@@ -1,3 +1,3 @@
-export const regex = Object.freeze({
+export const REGEX = Object.freeze({
   number: /^\d+$/
 });
