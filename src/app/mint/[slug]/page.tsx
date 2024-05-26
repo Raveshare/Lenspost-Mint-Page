@@ -41,16 +41,30 @@ export const generateMetadata = async ({
 
   return {
     twitter: {
+      images: [
+        {
+          url: imageCdnUrl,
+          alt: 'og image',
+          height: 1200,
+          width: 630
+        }
+      ],
       creator: LENSPOST_TWITTER_USERNAME,
       site: LENSPOST_TWITTER_USERNAME,
       description: APP_DESCRIPTION,
       card: 'summary_large_image',
-      images: [imageCdnUrl],
       title: APP_NAME
     },
     openGraph: {
+      images: [
+        {
+          url: imageCdnUrl,
+          alt: 'og image',
+          height: 1200,
+          width: 630
+        }
+      ],
       description: APP_DESCRIPTION,
-      images: [imageCdnUrl],
       title: APP_NAME,
       url: APP_URL
     },

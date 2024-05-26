@@ -2,8 +2,9 @@
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { ArrowDown } from '@/assets';
+import { FC } from 'react';
 
-const Dropdown = () => {
+const Dropdown: FC = () => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>

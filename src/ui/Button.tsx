@@ -3,7 +3,8 @@
 import React, {
   ButtonHTMLAttributes,
   DetailedHTMLProps,
-  ReactNode
+  ReactNode,
+  FC
 } from 'react';
 
 export type ButtonVariants =
@@ -33,7 +34,7 @@ interface ButtonProps
   title?: string;
 }
 
-const Button = ({
+const Button: FC<ButtonProps> = ({
   variant = 'primary',
   className = '',
   size = 'md',
@@ -43,7 +44,7 @@ const Button = ({
   outline,
   title,
   icon
-}: ButtonProps) => {
+}) => {
   return (
     <button
       className="rounded-lg bg-[#EBE8FD] px-4 py-2 text-center"

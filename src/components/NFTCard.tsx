@@ -11,14 +11,13 @@ import {
 import { erc721DropABI } from '@zoralabs/zora-721-contracts';
 import { useSwitchChain, useAccount } from 'wagmi';
 import { useEffect, useState, FC } from 'react';
+import { ShareButton, Button } from '@/ui';
 import { CollectionData } from '@/types';
 import { useMint721 } from '@/hooks';
 import { base } from 'viem/chains';
 import { parseEther } from 'viem';
-import { Share } from '@/assets';
 import { toast } from 'sonner';
 import Image from 'next/image';
-import { Button } from '@/ui';
 
 import { ConnectButton } from '.';
 
@@ -133,15 +132,7 @@ const NFTCard: FC<CollectionData> = ({
         </div>
         <div className="mt-6 flex items-center justify-between">
           <h3 className="text-xl font-semibold sm:text-4xl">{title}</h3>
-          <div
-            onClick={() => {
-              navigator.clipboard.writeText(window.location.href);
-              toast.success('Link copied!');
-            }}
-            className="cursor-pointer rounded-full border-2 border-[#E7D9E9] p-1"
-          >
-            <Share height={16} width={16} />
-          </div>
+          <ShareButton successMessage="Link copied!" />
         </div>
         <hr className="my-4 border border-dashed border-[#9E9EAD] border-opacity-30" />
         <div className="flex w-full flex-wrap gap-9">
