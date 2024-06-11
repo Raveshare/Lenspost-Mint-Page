@@ -9,10 +9,11 @@ import {
   REGEX
 } from '@/data';
 import { erc721DropABI } from '@zoralabs/zora-721-contracts';
+import { ShareButton, CopyButton, Button } from '@/ui';
 import { useSwitchChain, useAccount } from 'wagmi';
 import { useEffect, useState, FC } from 'react';
-import { ShareButton, Button } from '@/ui';
 import { CollectionData } from '@/types';
+import { formatAddress } from '@/utils';
 import { useMint721 } from '@/hooks';
 import { base } from 'viem/chains';
 import { parseEther } from 'viem';
@@ -138,6 +139,20 @@ const NFTCard: FC<CollectionData> = ({
         <div className="flex w-full flex-wrap gap-9">
           <div>
             <p className="text-sm font-semibold text-[#11111b] sm:text-sm">
+              Contract
+            </p>
+            <p className="text-sm text-[#11111b] sm:text-sm">
+              <span className="flex items-center gap-1">
+                {formatAddress(contractAddress)}
+                <CopyButton
+                  successMessage="Address copied!"
+                  text={contractAddress as string}
+                />
+              </span>
+            </p>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-[#11111b] sm:text-sm">
               Network
             </p>
             <p className="text-sm text-[#11111b] sm:text-sm">
@@ -149,7 +164,9 @@ const NFTCard: FC<CollectionData> = ({
               Type
             </p>
             <p className="text-sm text-[#11111b] sm:text-sm">
-              ERC{contractType}
+              {contractType?.startsWith('ERC')
+                ? contractType
+                : 'ERC' + contractType}
             </p>
           </div>
           <div>

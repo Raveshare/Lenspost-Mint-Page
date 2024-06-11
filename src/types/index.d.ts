@@ -10,6 +10,7 @@ export interface CollectionData {
   totalMinted?: string;
   royaltyBPS?: string;
   maxSupply?: string;
+  isError?: boolean;
   price?: string;
   title?: string;
 }

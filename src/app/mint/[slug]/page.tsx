@@ -97,11 +97,12 @@ const Home = async ({ params }: Props) => {
     imageUrl,
     chainId,
     message,
+    isError,
     price,
     title
   } = await getCollectionData(params?.slug);
 
-  if (message) {
+  if (isError) {
     return <Default text={message} />;
   }
 
