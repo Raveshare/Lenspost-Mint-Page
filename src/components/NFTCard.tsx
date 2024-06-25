@@ -5,20 +5,23 @@ import {
   CREATORS_REWARD_FEE,
   CDN_IMAGE_URL,
   S3_IMAGE_URL,
+  CHAIN_HELPER,
   CHAIN_NAME,
+  TOKENS,
   REGEX
 } from '@/data';
 import { erc721DropABI } from '@zoralabs/zora-721-contracts';
+import { useReadContractData, useMint721 } from '@/hooks';
+import { ShareButton, CopyButton, Button } from '@/ui';
 import { useSwitchChain, useAccount } from 'wagmi';
 import { useEffect, useState, FC } from 'react';
+import { LENSPOST_721 } from '@/contracts';
 import { CollectionData } from '@/types';
-import { useMint721 } from '@/hooks';
+import { formatAddress } from '@/utils';
 import { base } from 'viem/chains';
 import { parseEther } from 'viem';
-import { Share } from '@/assets';
 import { toast } from 'sonner';
 import Image from 'next/image';
-import { Button } from '@/ui';
 
 import { ConnectButton } from '.';
 
@@ -46,10 +49,22 @@ const NFTCard: FC<CollectionData> = ({
   const isSupportedChain: Boolean = isConnected && chainId === currentChainId;
   const imageCdnUrl = imageUrl?.replace(S3_IMAGE_URL, CDN_IMAGE_URL) as string;
   const mintFee = parseEther(CREATORS_REWARD_FEE);
+  const formattedPrice = Number(price) / 10 ** 18;
   const royalty = Number(royaltyBPS) / 100;
   const mintReferral = LENSPOST_ETH_ADDRESS;
   const mintTotalFee = mintFee * quantity;
   const comment = '';
+
+  const readParams = {
+    chainId: CHAIN_HELPER[chainId as keyof typeof CHAIN_HELPER]?.id,
+    functionName: 'claimCondition',
+    address: contractAddress,
+    abi: LENSPOST_721?.abi
+  };
+
+  const { pricePerToken, tokenAddress } = useReadContractData(
+    readParams as any
+  );
 
   const handleQuantity = (e: any) => {
     const value = e.target.value;
@@ -133,18 +148,24 @@ const NFTCard: FC<CollectionData> = ({
         </div>
         <div className="mt-6 flex items-center justify-between">
           <h3 className="text-xl font-semibold sm:text-4xl">{title}</h3>
-          <div
-            onClick={() => {
-              navigator.clipboard.writeText(window.location.href);
-              toast.success('Link copied!');
-            }}
-            className="cursor-pointer rounded-full border-2 border-[#E7D9E9] p-1"
-          >
-            <Share height={16} width={16} />
-          </div>
+          <ShareButton successMessage="Link copied!" />
         </div>
         <hr className="my-4 border border-dashed border-[#9E9EAD] border-opacity-30" />
         <div className="flex w-full flex-wrap gap-9">
+          <div>
+            <p className="text-sm font-semibold text-[#11111b] sm:text-sm">
+              Contract
+            </p>
+            <p className="text-sm text-[#11111b] sm:text-sm">
+              <span className="flex items-center gap-1">
+                {formatAddress(contractAddress)}
+                <CopyButton
+                  successMessage="Address copied!"
+                  text={contractAddress as string}
+                />
+              </span>
+            </p>
+          </div>
           <div>
             <p className="text-sm font-semibold text-[#11111b] sm:text-sm">
               Network
@@ -158,7 +179,9 @@ const NFTCard: FC<CollectionData> = ({
               Type
             </p>
             <p className="text-sm text-[#11111b] sm:text-sm">
-              ERC{contractType}
+              {contractType?.startsWith('ERC')
+                ? contractType
+                : 'ERC' + contractType}
             </p>
           </div>
           <div>
@@ -166,7 +189,9 @@ const NFTCard: FC<CollectionData> = ({
               Price
             </p>
             <p className="text-sm text-[#11111b] sm:text-sm">
-              {Number(price) > 0 ? `${price} ETH` : 'Free'}
+              {formattedPrice > 0
+                ? `${formattedPrice} ${TOKENS?.[tokenAddress]?.symbol}`
+                : 'Free'}
             </p>
           </div>
           <div>

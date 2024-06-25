@@ -10,8 +10,22 @@ export interface CollectionData {
   totalMinted?: string;
   royaltyBPS?: string;
   maxSupply?: string;
+  isError?: boolean;
   price?: string;
   title?: string;
+}
+
+export interface ContractData {
+  quantityLimitPerWallet?: any;
+  maxClaimableSupply?: any;
+  startTimestamp?: any;
+  pricePerToken?: any;
+  supplyClaimed?: any;
+  tokenAddress?: any;
+  isError?: boolean;
+  merkleRoot?: any;
+  message?: string;
+  metadata?: any;
 }
 
 export interface MintParams {

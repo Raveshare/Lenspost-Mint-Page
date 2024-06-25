@@ -1,7 +1,7 @@
 import { BACKEND_API } from '.';
 
 // Environments
-export const ENV = process.env.NODE_ENV;
+export const ENV = process.env.ENVIRONMENT;
 
 // Environment Variables
 export const WALLETCONNECT_KEY = process.env.NEXT_PUBLIC_WALLETCONNECT_KEY;

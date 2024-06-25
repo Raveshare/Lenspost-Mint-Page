@@ -1,6 +1,8 @@
 pnpm-lock.yaml
 node_modules
 social.ts
+contracts
+chains
 public
 .next
 out

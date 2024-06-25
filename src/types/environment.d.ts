@@ -2,5 +2,6 @@
 namespace NodeJS {
   interface ProcessEnv extends NodeJS.ProcessEnv {
     NEXT_PUBLIC_WALLETCONNECT_KEY: string;
+    ENVIRONMENT: string;
   }
 }
