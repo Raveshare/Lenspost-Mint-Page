@@ -5,16 +5,19 @@ import {
   CREATORS_REWARD_FEE,
   CDN_IMAGE_URL,
   S3_IMAGE_URL,
+  CHAIN_HELPER,
   CHAIN_NAME,
+  TOKENS,
   REGEX
 } from '@/data';
 import { erc721DropABI } from '@zoralabs/zora-721-contracts';
+import { useReadContractData, useMint721 } from '@/hooks';
 import { ShareButton, CopyButton, Button } from '@/ui';
 import { useSwitchChain, useAccount } from 'wagmi';
 import { useEffect, useState, FC } from 'react';
+import { LENSPOST_721 } from '@/contracts';
 import { CollectionData } from '@/types';
 import { formatAddress } from '@/utils';
-import { useMint721 } from '@/hooks';
 import { base } from 'viem/chains';
 import { parseEther } from 'viem';
 import { toast } from 'sonner';
@@ -46,10 +49,22 @@ const NFTCard: FC<CollectionData> = ({
   const isSupportedChain: Boolean = isConnected && chainId === currentChainId;
   const imageCdnUrl = imageUrl?.replace(S3_IMAGE_URL, CDN_IMAGE_URL) as string;
   const mintFee = parseEther(CREATORS_REWARD_FEE);
+  const formattedPrice = Number(price) / 10 ** 18;
   const royalty = Number(royaltyBPS) / 100;
   const mintReferral = LENSPOST_ETH_ADDRESS;
   const mintTotalFee = mintFee * quantity;
   const comment = '';
+
+  const readParams = {
+    chainId: CHAIN_HELPER[chainId as keyof typeof CHAIN_HELPER]?.id,
+    functionName: 'claimCondition',
+    address: contractAddress,
+    abi: LENSPOST_721?.abi
+  };
+
+  const { pricePerToken, tokenAddress } = useReadContractData(
+    readParams as any
+  );
 
   const handleQuantity = (e: any) => {
     const value = e.target.value;
@@ -174,7 +189,9 @@ const NFTCard: FC<CollectionData> = ({
               Price
             </p>
             <p className="text-sm text-[#11111b] sm:text-sm">
-              {Number(price) > 0 ? `${price} ETH` : 'Free'}
+              {formattedPrice > 0
+                ? `${formattedPrice} ${TOKENS?.[tokenAddress]?.symbol}`
+                : 'Free'}
             </p>
           </div>
           <div>
